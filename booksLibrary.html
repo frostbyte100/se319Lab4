@@ -11,7 +11,7 @@
             <h1>Login</h1>
             User Name:<br><input type="text" id="username"><br><br>
             Password:<br><input type="text" id="password"><br><br>
-            <input type="button" onclick="login()" id="login-button" value="Login">
+            <input type="button" id="login-button" value="Login">
         </form>
 
         <form id="librarianView" style="display: none">
@@ -19,12 +19,14 @@
             <div id="librarianTable"></div><br>
             <input type="text" id="addBookName" placeholder="Book Name">
             <input type="text" id="addBookShelf" placeholder="Shelf (literature, science, sport, art)">
-            <input type="button" id="addBookBtn" value="Add Book" onclick="librarianAdd()">
+            <input type="button" id="addBookBtn" value="Add Book"><br><br>
+            <input type="button" class="logout" value="LogOut">
         </form>
 
         <form id="undergradView" style="display: none">
             <h1>Undergraduate</h1>
-            <div id="undergradTable"></div><br>
+            <div id="undergradTable"></div><br><br>
+            <input type="button" class="logout" value="LogOut">
 
         </form>
 

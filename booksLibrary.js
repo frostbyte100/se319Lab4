@@ -15,6 +15,7 @@ class Book {
     setOnClick(func){
       this._onclick = func;
     }
+
     getOnClick(){
       return this._onclick;
     }
@@ -22,6 +23,7 @@ class Book {
     getInfo(){
       return this.getName() + " is a(n) Ordinary Book on shelf " + this.getCategory();
     }
+
     checkOut(userName) {
         if (this._availability) {
             this._borrowedBy = userName;
@@ -77,14 +79,41 @@ class Library {
         //0 woule be the Art, 1 - Science, 2 - Sport
         this._shelf = [new Shelf("Art"), new Shelf("Science"), new Shelf("Sport"), new Shelf("Literature")];
         this._books = [];
+        this._user = null;
     }
 
-    createBook(bookTitle) {
+    createBook(bookTitle, category) {
+
+        if(!this.validCategory(category)){
+            window.alert("Not a valid category. Please enter Art, Science, Sport, or Literature");
+            return;
+        }
+
         var id = Math.floor(Math.random() * 1000);
         while (this.isIdIn(id)) {
             id = Math.floor(Math.random() * 1000);
         }
-        this.addBook(new Book(id, bookTitle));
+
+        var newBook = new Book(id, bookTitle);
+        newBook.category = category;
+        this.addBook(newBook);
+
+        $("#addBookName").val("");
+        $("#addBookShelf").val("");
+
+    }
+
+    validCategory(category){
+        var i;
+        var possCategories = ["Art", "Science", "Sport", "Literature"];
+
+        for(i = 0; i < 4; i++){
+            if(category == possCategories[i]){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     isIdIn(id) {
@@ -130,7 +159,7 @@ class Library {
                     s += "<td id='"+this._books[i+x*4].getId()+"' class='book'>" + this._books[i+x*4].getName() + "</td>";
                 }
             }
-            col++;
+            this.col++;
             s+="</tr>";
         }
         s += "</table>";
@@ -152,6 +181,7 @@ class Library {
             }
         }return -1;
     }
+
     attachHandlers() {
 
         function clicked(name, cat) {
@@ -182,55 +212,76 @@ class Library {
         }
     }
 
-}
+    librarianAdd(){
+        this.createBook(document.getElementById("addBookName").value, document.getElementById("addBookShelf").value);
+        $("#library").remove();
+        $('#librarianTable').html(this.createTable());
+    }
 
-var lib = new Library();
-lib.fillWithBooks();
-$('#librarySpace').html(lib.createTable());
-lib.attachHandlers();
+    login(){
+        var name = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
 
-var username;
-var isAdmin = false;
+        if(name == "admin" && password == "admin"){
+            this._user = new User(name, this);
+            $("#loginMenu").css("display","none");
+            $("#librarianView").css("display","block");
+            $('#librarianTable').html(this.createTable());
 
-function login(){
-    var name = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
+        } else if (name.charAt(0) == 'u' || name.charAt(0) == 'U'){
+            this._user = new User(name, this);
+            $("#loginMenu").css("display","none");
+            $("#undergradView").css("display","block");
+            $('#undergradTable').html(this.createTable());
 
-    if(name == "admin" && password == "admin"){
-        librarianView(name);
-    } else if (name.charAt(0) == 'u' || name.charAt(0) == 'U'){
-        undergradView(name);
-    } else {
-        window.alert("Incorrect username or password.");
+        } else {
+            window.alert("Invalid username or password.");
+        }
+
+        $("#username").val("");
+        $("#password").val("");
+
+    }
+
+    logout(){
+
+        if(this._user._isAdmin){
+            $("#librarianView").css("display","none");
+        } else {
+            $("#undergradView").css("display","none");
+        }
+
+        this._user = null;
+        $("#loginMenu").css("display","block");
     }
 
 }
 
-function librarianView(name){
-    username = name;
-    isAdmin = true;
+class User {
 
-    $("#loginMenu").css("display","none");
-    $("#librarianView").css("display","block");
-    $('#librarianTable').html(lib.createTable());
+    constructor(username) {
+        this._username = username;
+        this._isAdmin = false;
 
-}
-
-function undergradView(){
-    username = name;
-
-    $("#loginMenu").css("display","none");
-    $("#undergradView").css("display","block");
-    $('#undergradTable').html(lib.createTable());
+        if(this._username == "admin" || this._username == "Admin"){
+            this._isAdmin = true;
+        }
+    }
 
 }
 
-function librarianAdd(){
-    lib.addBook(document.getElementById("addBookName").value, document.getElementById("addBookShelf").value);
-    document.getElementById("addBookName").value = "";
-    document.getElementById("addBookShelf").vlaue = "";
-}
+window.onload = function(){
+    var lib = new Library();
+    lib.fillWithBooks();
 
-function checkOut(id){
-    //lib.getBookById(id).checkOut(username);
+    $("#login-button").click(function(){
+        lib.login();
+    });
+    $("#addBookBtn").click(function(){
+        lib.librarianAdd();
+    });
+    $(".logout").click(function(){
+        lib.logout();
+    });
+
 }
