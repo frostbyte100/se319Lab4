@@ -38,19 +38,24 @@ class Book{
 class Library {
   constructor() {
     this._books = [];
-    this._
   }
 
   createBook(bookTitle){
-    addBook( new Book(bookTitle, Math.floor((Math.random() * 1000) )));
+    var id = Math.floor(Math.random() * 1000);
+    while(isIdIn(id)){
+      id = Math.floor(Math.random() * 1000);
+    }
+    addBook( new Book(bookTitle, id ));
   }
 
   isIdIn(id){
     var i=0;
     for(i=0;i<this._books.length;i++){
-      if()
+      if(id==this._books[i]){
+        return true;
+      }
     }
-
+    return false;
   }
   addBook(b){
     this._books.push(b);
