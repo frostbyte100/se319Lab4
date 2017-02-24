@@ -1,7 +1,7 @@
 'use strict';
 
 class Book{
-  //_possCategories = ["Art","Science","Sport","Literature"];
+  var _possCategories = ["Art","Science","Sport","Literature"];
   constructor(id, name){
     this._id = id;
     this._category = _possCategories[id%4];
