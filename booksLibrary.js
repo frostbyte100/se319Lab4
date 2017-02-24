@@ -23,6 +23,10 @@ class Book {
 
     }
 
+    setCategory(cat){
+        this._category = cat;
+    }
+
     getOnClick(){
       return this._onclick;
     }
@@ -105,7 +109,7 @@ class Library {
         }
 
         var newBook = new Book(id, bookTitle);
-        newBook.category = category;
+        newBook.setCategory(category);
         this.addBook(newBook);
         newBook.setOnClick();
 
@@ -145,6 +149,7 @@ class Library {
 
             if (b.getCategory() == this._shelf[i].getCategory()) {
                 this._shelf[i].addBook(b);
+                b.setOnClick();
             }
         }
     }
