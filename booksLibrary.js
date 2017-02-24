@@ -92,6 +92,7 @@ class Library {
         this._books.push(b);
         var i;
         for (i = 0; i < 4; i++) {
+
             if (b.getCategory() == this._shelf[i].getCategory()) {
                 this._shelf[i].addBook(b);
             }
@@ -108,17 +109,20 @@ class Library {
         }
         s += "</tr>";
         x = 0;
-        var end = Math.max(this._shelf[0].getBooks(), Math.max(this._shelf[1].getBooks(), Math.max(this._shelf[2].getBooks(), this._shelf[3].getBooks())));
+        var end = Math.max(this._shelf[0].getBooks().length, Math.max(this._shelf[1].getBooks().length, Math.max(this._shelf[2].getBooks().length, this._shelf[3].getBooks().length)));
         console.log(end);
         var i = 0;
+
         for (x = 0; x < end; x++) {
+            s+="<tr>";
             for (i = 0; i < 4; i++) {
-                if (this._shelf[x].getBooks().length < end) {
+                if (this._shelf[i].getBooks().length < end) {
                     s += "<td></td>";
                 } else {
-                    s += "<td id='this._shelf[x].getBooks()[i].getId()' class='book'>" + this._shelf[x].getBooks()[i].getName() + "</td>";
+                    s += "<td id='"+this._books[x].getId()+"' class='book'>" + this._books[x].getName() + "</td>";
                 }
             }
+            s+="</tr>";
         }
         s += "</table>";
         return s;
