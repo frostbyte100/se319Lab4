@@ -4,8 +4,6 @@ function login(){
     librarian = false;
     undergraduate = false;
 
-    console.log("in");
-
     if(username == "admin" && password == "admin"){
         librarian = true;
     } else if (username.charAt(0) == 'u' || username.charAt(0) == 'U'){
