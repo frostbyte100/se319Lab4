@@ -17,7 +17,7 @@ class Book {
       var name = this._name;
       var cat = this._category;
       $("#"+this._id).click( function(){
-        $("#info").html(name + " is a(n) Ordinary Book on shelf " + cat);
+        $("#info").html(   name + " is a(n) Ordinary Book on shelf " + cat);
 
       });
 
@@ -107,6 +107,7 @@ class Library {
         var newBook = new Book(id, bookTitle);
         newBook.category = category;
         this.addBook(newBook);
+        newBook.setOnClick();
 
         $("#addBookName").val("");
         $("#addBookShelf").val("");
@@ -138,6 +139,7 @@ class Library {
 
     addBook(b) {
         this._books.push(b);
+        b.setOnClick();
         var i;
         for (i = 0; i < 4; i++) {
 
@@ -178,8 +180,7 @@ class Library {
     }
 
     fillWithBooks() {
-        var x;
-        for (x = 0; x <= 24; x++) {
+        for (var x = 0; x <= 24; x++) {
             this.addBook(new Book(x,"B"+x));
         }
     }
@@ -191,12 +192,6 @@ class Library {
                 return this._books[i];
             }
         }return -1;
-    }
-
-    attachHandlers() {
-      for (var i = 0; i < this._books.length; i++) {
-           this._books[i].setOnClick();
-      }
     }
 
     librarianAdd(){
@@ -249,10 +244,15 @@ class User {
     constructor(username) {
         this._username = username;
         this._isAdmin = false;
+        this._numCheckedOut = 0;
 
         if(this._username == "admin" || this._username == "Admin"){
             this._isAdmin = true;
         }
+    }
+
+    getCheckedOutNum(){
+      return _numCheckedOut;
     }
 
 }
