@@ -18,6 +18,10 @@ class Book {
     getOnClick(){
       return this._onclick;
     }
+
+    getInfo(){
+      return this.getName() + " is a(n) Ordinary Book on shelf " + this.getCategory();
+    }
     checkOut(userName) {
         if (this._availability) {
             this._borrowedBy = userName;
@@ -134,7 +138,7 @@ class Library {
     fillWithBooks() {
         var x;
         for (x = 0; x <= 24; x++) {
-            this.createBook("B"+x);
+            this.addBook(new Book(x,"B"+x));
         }
     }
     getBookById(id) {
@@ -159,15 +163,17 @@ class Library {
 
         var clickF;
         var allBooks = document.getElementsByClassName("book");
-        for(var i = 0; i < allBooks.length; i++)
+        var i;
+        for( i = 0; i < allBooks.length; i++)
         {
            var book = this.getBookById(allBooks.item(i).id);
            book.setOnClick(new clicked(book.getName(), book.getCategory()));
 
            $("#"+book.getId()).click( function(){
 
-             console.log("has been clicked");
-             $("#info").html(book.getOnClick().showInfo());
+             //console.log(book.getOnClick().showInfo());
+             //$("#info").html(book.getOnClick().showInfo());
+             $("#info").html(lib.getBookById.getInfo());
 
            });
         }
@@ -176,7 +182,7 @@ class Library {
 }
 
 
-let lib = new Library("John");
+var lib = new Library();
 lib.fillWithBooks();
 $('#librarySpace').html(lib.createTable());
 lib.attachHandlers();
