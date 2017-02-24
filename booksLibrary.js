@@ -12,8 +12,15 @@ class Book {
         this._onclick;
     }
 
-    setOnClick(func){
-      this._onclick = func;
+    setOnClick(){
+      var id = this._id;
+      var name = this._name;
+      var cat = this._category;
+      $("#"+this._id).click( function(){
+        $("#info").html(name + " is a(n) Ordinary Book on shelf " + cat);
+
+      });
+
     }
 
     getOnClick(){
@@ -69,6 +76,9 @@ class Shelf {
     }
     getBooks() {
         return this._books;
+    }
+    getBook(i){
+      return this._books[i];
     }
 
 }
@@ -153,15 +163,16 @@ class Library {
         for (x = 0; x < lastRow; x++) {
             s+="<tr>";
             for (i = 0; i < 4; i++) {
-                if (i+x*4 >= this._books.length) {
+                if (this._shelf[i].getBook(x) === undefined) {
                     s += "<td></td>";
                 } else {
-                    s += "<td id='"+this._books[i+x*4].getId()+"' class='book'>" + this._books[i+x*4].getName() + "</td>";
+
+                    s += "<td id='"+this._shelf[i].getBook(x).getId()+"' class='book'>" + this._shelf[i].getBook(x).getName() + "</td>";
                 }
             }
-            this.col++;
             s+="</tr>";
         }
+
         s += "</table>";
         return s;
     }
@@ -183,33 +194,9 @@ class Library {
     }
 
     attachHandlers() {
-
-        function clicked(name, cat) {
-            this.name = name;
-            this.cat = cat;
-
-            this.showInfo =  function(){
-                return book.getName() + " is a(n) Ordinary Book on shelf " + book.getCategory();
-            }
-
-        }
-
-        var clickF;
-        var allBooks = document.getElementsByClassName("book");
-        var i;
-        for( i = 0; i < allBooks.length; i++)
-        {
-           var book = this.getBookById(allBooks.item(i).id);
-           book.setOnClick(new clicked(book.getName(), book.getCategory()));
-
-           $("#"+book.getId()).click( function(){
-
-             //console.log(book.getOnClick().showInfo());
-             //$("#info").html(book.getOnClick().showInfo());
-             $("#info").html(lib.getBookById.getInfo());
-
-           });
-        }
+      for (var i = 0; i < this._books.length; i++) {
+           this._books[i].setOnClick();
+      }
     }
 
     librarianAdd(){
