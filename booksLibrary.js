@@ -1,6 +1,5 @@
 'use strict';
 
-
 class Book {
 
     constructor(id, name) {
@@ -12,7 +11,6 @@ class Book {
         this._borrowedBy = "";
         this._availability = false;
     }
-
 
     checkOut(userName) {
         if (this._availability) {
