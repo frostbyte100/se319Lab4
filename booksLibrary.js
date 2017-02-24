@@ -2,10 +2,10 @@
 
 
 class Book{
-  _possCatw = ["Art","Science","Sport","Literature"];
+  _possCategories = ["Art","Science","Sport","Literature"];
   constructor(id, name){
     this._id = id;
-    this._category = cates[id%4];
+    this._category = _possCategories[id%4];
     this._name = name;
     this._borrowedBy = "";
     this._availability = false;
@@ -34,10 +34,23 @@ class Book{
   }
 }
 
+class Shelf{
+
+    constructor(category){
+      this._cat = category;
+      this._books = [];
+    }
+
+    addBook(name){
+
+    }
+
+}
 
 class Library {
   constructor() {
     this._books = [];
+
   }
 
   createBook(bookTitle){
