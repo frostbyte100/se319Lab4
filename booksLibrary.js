@@ -102,26 +102,7 @@ class Library {
       }
       s +="</tr>";
 
-      var eleNum = 0;
-      var rowN = 0;
-      s += "<tr><td>";
-      for (var property in Calc.View) {
-          if (Calc.View[property] !== Calc.View.textRow) {
-              if (Calc.View.hasOwnProperty(property) && isNaN(property)) {
-                  s += Calc.displayElement(Calc.View[property]);
-                  eleNum++;
-              }
-
-              if (eleNum == 4) {
-                  rowN++;
-                  s += "</tr></td>";
-                  if (rowN != 6) {
-                      s += "<tr><td>";
-                  }
-                  eleNum = 0;
-              }
-          }
-      }
+      for()
       s += "</table>";
       return s;
     }
@@ -130,3 +111,20 @@ class Library {
 }
 
 Library.prototype._possCategories = ["Art", "Science", "Sport", "Literature"];
+
+
+function login(){
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+
+    if(username == "admin" && password == "admin"){
+        $("#loginMenu").css("display","none");
+        //show librarian view
+    } else if (username.charAt(0) == 'u' || username.charAt(0) == 'U'){
+        $("#loginMenu").css("display","none");
+        //show university student view
+    } else {
+        window.alert("Incorrect username or password.");
+    }
+
+}
