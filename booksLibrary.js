@@ -130,7 +130,7 @@ class Library {
                     s += "<td id='"+this._books[i+x*4].getId()+"' class='book'>" + this._books[i+x*4].getName() + "</td>";
                 }
             }
-            col++;
+            
             s+="</tr>";
         }
         s += "</table>";
