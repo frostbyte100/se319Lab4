@@ -110,19 +110,30 @@ class Library {
 
 Library.prototype._possCategories = ["Art", "Science", "Sport", "Literature"];
 
+var username;
+var isAdmin = false;
 
 function login(){
-    var username = document.getElementById("username").value;
+    var name = document.getElementById("username").value;
     var password = document.getElementById("password").value;
 
-    if(username == "admin" && password == "admin"){
+    if(name == "admin" && password == "admin"){
         $("#loginMenu").css("display","none");
-        //show librarian view
-    } else if (username.charAt(0) == 'u' || username.charAt(0) == 'U'){
+        $("#librarianView").css("display","block");
+        username = name;
+        isAdmin = true;
+
+    } else if (name.charAt(0) == 'u' || name.charAt(0) == 'U'){
         $("#loginMenu").css("display","none");
-        //show university student view
+        $("#undergradView").css("display","block");
+        username = name;
+
     } else {
         window.alert("Incorrect username or password.");
     }
+
+}
+
+function buildTable(){
 
 }
