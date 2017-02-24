@@ -69,13 +69,13 @@ class Library {
         this._shelf = [new Shelf("Art"), new Shelf("Science"), new Shelf("Sport"), new Shelf("Literature")];
         this._books = [];
     }
-    
+
     createBook(bookTitle) {
         var id = Math.floor(Math.random() * 1000);
-        while (isIdIn(id)) {
+        while (this.isIdIn(id)) {
             id = Math.floor(Math.random() * 1000);
         }
-        addBook(new Book(bookTitle, id));
+        this.addBook(new Book(bookTitle, id));
     }
 
     isIdIn(id) {
@@ -87,6 +87,7 @@ class Library {
         }
         return false;
     }
+
     addBook(b) {
         this._books.push(b);
         var i;
@@ -112,18 +113,17 @@ class Library {
         console.log(end);
         console.log(this._books);
         var i = 0;
-        for (x = 0; x <= end; x++) {
+        var col = 0;
+        for (x = 0; x < end; x++) {
             s+="<tr>";
             for (i = 0; i < 4; i++) {
-                console.log(i+x*4);
-                if (i+x*4 >= this._books.length) {
+                if (x+i*col > this._books.length) {
                     s += "<td></td>";
                 } else {
-
-                    s += "<td id='"+this._books[i+x*4].getId()+"' class='book'>" + this._books[i+x*4].getName() + "</td>";
+                    s += "<td id='"+this._books[x+i*col].getId()+"' class='book'>" + this._books[x+i*col].getName() + "</td>";
                 }
             }
-
+            col++;
             s+="</tr>";
         }
         s += "</table>";
@@ -133,7 +133,7 @@ class Library {
     fillWithBooks() {
         var x = 0;
         for (x = 0; x <= 24; x++) {
-            this.addBook(new Book(x, "b" + x));
+            this.createBook("b"+1);
         }
     }
 
@@ -148,7 +148,7 @@ class Library {
     attachHandlers() {
         $('.book').each(function(i, obj) {
             $(this).click(function() {
-                var book = this._getBookById(this.id);
+                var book = getBookById(this.id);
                 $("#info").html(book.getName() + " is a(n) Ordinary Book on shelf " + book.getCategory());
             });
         });
@@ -169,17 +169,40 @@ function login(){
     var password = document.getElementById("password").value;
 
     if(name == "admin" && password == "admin"){
-        $("#loginMenu").css("display","none");
-        $("#librarianView").css("display","block");
-        username = name;
-        isAdmin = true;
-
+        librarianView(name);
     } else if (name.charAt(0) == 'u' || name.charAt(0) == 'U'){
-        $("#loginMenu").css("display","none");
-        $("#undergradView").css("display","block");
-        username = name;
-        } else {
+        undergradView(name);
+    } else {
         window.alert("Incorrect username or password.");
     }
 
+}
+
+function librarianView(name){
+    username = name;
+    isAdmin = true;
+
+    $("#loginMenu").css("display","none");
+    $("#librarianView").css("display","block");
+    $('#librarianTable').html(lib.createTable());
+
+}
+
+function undergradView(){
+    username = name;
+
+    $("#loginMenu").css("display","none");
+    $("#undergradView").css("display","block");
+    $('#undergradTable').html(lib.createTable());
+
+}
+
+function librarianAdd(){
+    lib.addBook(document.getElementById("addBookName").value, document.getElementById("addBookShelf").value);
+    document.getElementById("addBookName").value = "";
+    document.getElementById("addBookShelf").vlaue = "";
+}
+
+function checkOut(id){
+    //lib.getBookById(id).checkOut(username);
 }
