@@ -68,9 +68,8 @@ class Library {
         //0 woule be the Art, 1 - Science, 2 - Sport
         this._shelf = [new Shelf("Art"), new Shelf("Science"), new Shelf("Sport"), new Shelf("Literature")];
         this._books = [];
-
-
     }
+    
     createBook(bookTitle) {
         var id = Math.floor(Math.random() * 1000);
         while (isIdIn(id)) {
@@ -134,6 +133,7 @@ class Library {
             this.addBook(new Book(x, "b" + x));
         }
     }
+
     getBookById(id) {
         var i;
         for (i = 0; i < this._books.length; i++) {
