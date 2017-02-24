@@ -4,14 +4,24 @@ class Book {
 
     constructor(id, name) {
         this._id = id;
-
         this._possCategories = ["Art", "Science", "Sport", "Literature"];
         this._category = this._possCategories[id % 4];
         this._name = name;
         this._borrowedBy = "";
         this._availability = false;
+        this._onclick;
     }
 
+    setOnClick(func){
+      this._onclick = func;
+    }
+    getOnClick(){
+      return this._onclick;
+    }
+
+    getInfo(){
+      return this.getName() + " is a(n) Ordinary Book on shelf " + this.getCategory();
+    }
     checkOut(userName) {
         if (this._availability) {
             this._borrowedBy = userName;
@@ -49,7 +59,6 @@ class Shelf {
         this._cat = category;
         this._books = [];
     }
-
     addBook(b) {
         this._books.push(b);
     }
@@ -75,7 +84,7 @@ class Library {
         while (this.isIdIn(id)) {
             id = Math.floor(Math.random() * 1000);
         }
-        this.addBook(new Book(bookTitle, id));
+        this.addBook(new Book(id, bookTitle));
     }
 
     isIdIn(id) {
@@ -109,18 +118,16 @@ class Library {
         }
         s += "</tr>";
         x = 0;
-        var end = Math.max(this._shelf[0].getBooks().length, Math.max(this._shelf[1].getBooks().length, Math.max(this._shelf[2].getBooks().length, this._shelf[3].getBooks().length)));
-        console.log(end);
-        console.log(this._books);
+        var lastRow = Math.max(this._shelf[0].getBooks().length, Math.max(this._shelf[1].getBooks().length, Math.max(this._shelf[2].getBooks().length, this._shelf[3].getBooks().length)));
+
         var i = 0;
-        var col = 0;
-        for (x = 0; x < end; x++) {
+        for (x = 0; x < lastRow; x++) {
             s+="<tr>";
             for (i = 0; i < 4; i++) {
-                if (x+i*col > this._books.length) {
+                if (i+x*4 >= this._books.length) {
                     s += "<td></td>";
                 } else {
-                    s += "<td id='"+this._books[x+i*col].getId()+"' class='book'>" + this._books[x+i*col].getName() + "</td>";
+                    s += "<td id='"+this._books[i+x*4].getId()+"' class='book'>" + this._books[i+x*4].getName() + "</td>";
                 }
             }
             col++;
@@ -131,9 +138,9 @@ class Library {
     }
 
     fillWithBooks() {
-        var x = 0;
+        var x;
         for (x = 0; x <= 24; x++) {
-            this.createBook("b"+1);
+            this.addBook(new Book(x,"B"+x));
         }
     }
 
@@ -143,20 +150,41 @@ class Library {
             if (this._books[i].getId() == id) {
                 return this._books[i];
             }
-        }
+        }return -1;
     }
     attachHandlers() {
-        $('.book').each(function(i, obj) {
-            $(this).click(function() {
-                var book = getBookById(this.id);
-                $("#info").html(book.getName() + " is a(n) Ordinary Book on shelf " + book.getCategory());
-            });
-        });
+
+        function clicked(name, cat) {
+            this.name = name;
+            this.cat = cat;
+
+            this.showInfo =  function(){
+                return book.getName() + " is a(n) Ordinary Book on shelf " + book.getCategory();
+            }
+
+        }
+
+        var clickF;
+        var allBooks = document.getElementsByClassName("book");
+        var i;
+        for( i = 0; i < allBooks.length; i++)
+        {
+           var book = this.getBookById(allBooks.item(i).id);
+           book.setOnClick(new clicked(book.getName(), book.getCategory()));
+
+           $("#"+book.getId()).click( function(){
+
+             //console.log(book.getOnClick().showInfo());
+             //$("#info").html(book.getOnClick().showInfo());
+             $("#info").html(lib.getBookById.getInfo());
+
+           });
+        }
     }
 
 }
 
-let lib = new Library("John");
+var lib = new Library();
 lib.fillWithBooks();
 $('#librarySpace').html(lib.createTable());
 lib.attachHandlers();
