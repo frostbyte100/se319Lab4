@@ -176,7 +176,3 @@ function login(){
     }
 
 }
-
-function buildTable(){
-
-}
