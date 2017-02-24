@@ -112,17 +112,18 @@ class Library {
         console.log(end);
         console.log(this._books);
         var i = 0;
-        var col = 0;
-        for (x = 0; x < end; x++) {
+        for (x = 0; x <= end; x++) {
             s+="<tr>";
             for (i = 0; i < 4; i++) {
-                if (x+i*col > this._books.length) {
+                console.log(i+x*4);
+                if (i+x*4 >= this._books.length) {
                     s += "<td></td>";
                 } else {
-                    s += "<td id='"+this._books[x+i*col].getId()+"' class='book'>" + this._books[x+i*col].getName() + "</td>";
+
+                    s += "<td id='"+this._books[i+x*4].getId()+"' class='book'>" + this._books[i+x*4].getName() + "</td>";
                 }
             }
-            col++;
+
             s+="</tr>";
         }
         s += "</table>";
@@ -147,7 +148,7 @@ class Library {
     attachHandlers() {
         $('.book').each(function(i, obj) {
             $(this).click(function() {
-                var book = getBookById(this.id);
+                var book = this._getBookById(this.id);
                 $("#info").html(book.getName() + " is a(n) Ordinary Book on shelf " + book.getCategory());
             });
         });
