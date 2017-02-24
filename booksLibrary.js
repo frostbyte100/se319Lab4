@@ -5,8 +5,8 @@ class Book {
     constructor(id, name) {
         this._id = id;
 
-        this.prototype._possCategories = ["Art", "Science", "Sport", "Literature"];
-        this._category = _possCategories[id % 4];
+        this._possCategories = ["Art", "Science", "Sport", "Literature"];
+        this._category = this._possCategories[id % 4];
         this._name = name;
         this._borrowedBy = "";
         this._availability = false;
@@ -68,7 +68,7 @@ class Library {
         //0 woule be the Art, 1 - Science, 2 - Sport
         this._shelf = [new Shelf("Art"), new Shelf("Science"), new Shelf("Sport"), new Shelf("Literature")];
         this._books = [];
-      
+
 
     }
     createBook(bookTitle) {
@@ -93,7 +93,7 @@ class Library {
         var i;
         for (i = 0; i < 4; i++) {
             if (b.getCategory() == this._shelf[i].getCategory()) {
-                this._shelf.addBook(b);
+                this._shelf[i].addBook(b);
             }
         }
     }
@@ -108,7 +108,8 @@ class Library {
         }
         s += "</tr>";
         x = 0;
-        var end = Math.max(this._self[0].getBooks(), Math.max(this._self[1].getBooks(), Math.max(this._self[2].getBooks(), this._self[3].getBooks())));
+        var end = Math.max(this._shelf[0].getBooks(), Math.max(this._shelf[1].getBooks(), Math.max(this._shelf[2].getBooks(), this._shelf[3].getBooks())));
+        console.log(end);
         var i = 0;
         for (x = 0; x < end; x++) {
             for (i = 0; i < 4; i++) {
