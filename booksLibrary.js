@@ -1,8 +1,7 @@
 'use strict';
 
-
 class Book{
-  _possCategories = ["Art","Science","Sport","Literature"];
+  //_possCategories = ["Art","Science","Sport","Literature"];
   constructor(id, name){
     this._id = id;
     this._category = _possCategories[id%4];
@@ -74,5 +73,21 @@ class Library {
     this._books.push(b);
   }
 
+
+}
+
+function login(){
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+
+    if(username == "admin" && password == "admin"){
+        $("#loginMenu").css("display","none");
+        //show librarian view
+    } else if (username.charAt(0) == 'u' || username.charAt(0) == 'U'){
+        $("#loginMenu").css("display","none");
+        //show university student view
+    } else {
+        window.alert("Incorrect username or password.");
+    }
 
 }
