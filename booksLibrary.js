@@ -13,50 +13,55 @@ class Book {
     }
 
 
-    removeHandlers(){
-      $("#"+this._id).off();
+    removeHandlers() {
+        $("#" + this._id).off();
     }
 
-    setOnAdminClick(){
-      var name = this._name;
-      var cat = this._category;
-      $("#"+this._id).click( function(){
-        console.log("here");
-        $("#info").html(   name + " is a(n) Ordinary Book on shelf " + cat);
-        console.log("here");
-
-      });
+    setOnAdminClick() {
+        var id = this._id;
+        var name = this._name;
+        var cat = this._category;
+        $("#" + this._id).click(function() {
+            console.log(id);
+            console.log(name);
+            $("#info").html(name + " is a(n) Ordinary Book on shelf " + cat);
+        });
 
     }
 
-
-    setUserClick(User){
-      $("#"+this._id).click( function(){
-        if(this._availability){
-          if(User._numCheckedOut<2){
-            $("#"+this._id).css("background-color","white");
-            this._borrowedBy = "";
-            this._availability = true;
-            User.checkOut();
-          }
-        }else{
-            $("#"+this._id).css("background-color","red");
-            this._borrowedBy = User._username;
-            this._availability = false;
-            User.checkIn();
-        }
-      });
+    setUserClick(_user) {
+        var User = _user;
+        var id = this._id;
+        var book = this;
+        $("#" + this._id).click(function() {
+            console.log("trying");
+            if (book._availability) {
+                if (User._numCheckedOut < 2) {
+                    $("#" + id).css("background-color", "red");
+                    book._borrowedBy = User._username;
+                    book._availability = false;
+                    User.checkOut();
+                }else{
+                  window.alert("You can only check out two books!");
+                }
+            } else {
+                $("#" + id).css("background-color", "white");
+                book._borrowedBy = "";
+                book._availability = true;
+                User.checkIn();
+            }
+        });
     }
-    setCategory(cat){
+    setCategory(cat) {
         this._category = cat;
     }
 
-    getOnClick(){
-      return this._onclick;
+    getOnClick() {
+        return this._onclick;
     }
 
-    getInfo(){
-      return this.getName() + " is a(n) Ordinary Book on shelf " + this.getCategory();
+    getInfo() {
+        return this.getName() + " is a(n) Ordinary Book on shelf " + this.getCategory();
     }
 
 
@@ -89,8 +94,8 @@ class Shelf {
     getBooks() {
         return this._books;
     }
-    getBook(i){
-      return this._books[i];
+    getBook(i) {
+        return this._books[i];
     }
 
 }
@@ -106,7 +111,11 @@ class Library {
 
     createBook(bookTitle, category) {
 
-        if(!this.validCategory(category)){
+        if (!this.validBookTitle(bookTitle)) {
+            window.alert("Not a valid book Title, please input some text");
+            return;
+        }
+        if (!this.validCategory(category)) {
             window.alert("Not a valid category. Please enter Art, Science, Sport, or Literature");
             return;
         }
@@ -120,23 +129,20 @@ class Library {
         newBook.setCategory(category);
         this.addBook(newBook);
 
-        if(this._user._isAdmin){
-          newBook.setOnAdminClick();
-        }else if (this._user !== null && this._user !== undefined){
-          newBook.setUserClick(this._user);
-        }
-
         $("#addBookName").val("");
         $("#addBookShelf").val("");
 
     }
 
-    validCategory(category){
+    validBookTitle(bookTitle) {
+        return bookTitle != "";
+    }
+    validCategory(category) {
         var i;
         var possCategories = ["Art", "Science", "Sport", "Literature"];
 
-        for(i = 0; i < 4; i++){
-            if(category == possCategories[i]){
+        for (i = 0; i < 4; i++) {
+            if (category == possCategories[i]) {
                 return true;
             }
         }
@@ -182,71 +188,69 @@ class Library {
         var column = 0;
         var row = 0;
         for (row = 0; row < lastRow; row++) {
-            s+="<tr>";
+            s += "<tr>";
             for (column = 0; column < 4; column++) {
                 if (this._shelf[column].getBook(row) === undefined) {
                     s += "<td></td>";
                 } else {
 
-                    s += "<td id='"+this._shelf[column].getBook(row).getId()+"' class='book'>" + this._shelf[column].getBook(row).getName() + "</td>";
+                    s += "<td id='" + this._shelf[column].getBook(row).getId() + "' class='book'>" + this._shelf[column].getBook(row).getName() + "</td>";
                 }
             }
-            s+="</tr>";
+            s += "</tr>";
         }
 
         s += "</table>";
+        s += "<div id='info'></div>";
         return s;
     }
 
     fillWithBooks() {
         for (var x = 0; x <= 24; x++) {
-            this.addBook(new Book(x,"B"+x));
+            this.addBook(new Book(x, "B" + x));
         }
     }
 
-    addHandlers(){
-      console.log("Adding");
-      for(var i=0;i<this._books.length;i++){
-        this._books[i].removeHandlers();
-        if(this._user._isAdmin==="admin"){
-          this._books[i].setOnAdminClick();
-        }else if (this._user !== null && this._user !== undefined){
-          this._books[i].setUserClick(this._user);
+    addHandlers() {
+        console.log("Adding");
+        for (var i = 0; i < this._books.length; i++) {
+            this._books[i].removeHandlers();
+            if (this._user._isAdmin) {
+
+                this._books[i].setOnAdminClick();
+            } else if (this._user !== null && this._user !== undefined) {
+                this._books[i].setUserClick(this._user);
+            }
         }
-      }
     }
 
     getBookById(id) {
-        var i;
-        for (i = 0; i < this._books.length; i++) {
-            if (this._books[i].getId() == id) {
-                return this._books[i];
-            }
-        }return -1;
+        return this._books[id];
     }
 
-    librarianAdd(){
+    librarianAdd() {
         this.createBook(document.getElementById("addBookName").value, document.getElementById("addBookShelf").value);
         $("#library").remove();
         $('#librarianTable').html(this.createTable());
+        this.addHandlers();
     }
 
-    login(){
+    login() {
         var name = document.getElementById("username").value;
         var password = document.getElementById("password").value;
 
-        if(name == "admin" && password == "admin"){
+        if (name == "admin" && password == "admin") {
             this._user = new User(name, this);
-            $("#loginMenu").css("display","none");
-            $("#librarianView").css("display","block");
-            $('#librarianTable').html(this.createTable() +   "<div id='info'></div>");
+            $("#loginMenu").css("display", "none");
+            $("#librarianView").css("display", "block");
+            $('#librarianTable').html(this.createTable());
 
             this.addHandlers();
-        } else if (name.charAt(0) == 'u' || name.charAt(0) == 'U'){
+        } else if (name.charAt(0) == 'u' || name.charAt(0) == 'U') {
             this._user = new User(name, this);
-            $("#loginMenu").css("display","none");
-            $("#undergradView").css("display","block");
-            $('#undergradTable').html(this.createTable()  +   "<div id='info'></div>");
+            $("#loginMenu").css("display", "none");
+            $("#undergradView").css("display", "block");
+            $('#undergradTable').html(this.createTable());
             this.addHandlers();
         } else {
             window.alert("Invalid username or password.");
@@ -257,16 +261,16 @@ class Library {
 
     }
 
-    logout(){
+    logout() {
 
-        if(this._user._isAdmin){
-            $("#librarianView").css("display","none");
+        if (this._user._isAdmin) {
+            $("#librarianView").css("display", "none");
         } else {
-            $("#undergradView").css("display","none");
+            $("#undergradView").css("display", "none");
         }
 
         this._user = null;
-        $("#loginMenu").css("display","block");
+        $("#loginMenu").css("display", "block");
     }
 
 }
@@ -278,31 +282,31 @@ class User {
         this._isAdmin = false;
         this._numCheckedOut = 0;
 
-        if(this._username == "admin" || this._username == "Admin"){
+        if (this._username == "admin" || this._username == "Admin") {
             this._isAdmin = true;
         }
     }
 
-    checkOut(){
-      this._numCheckedOut++;
+    checkOut() {
+        this._numCheckedOut++;
     }
-    checkIn(){
-      this._numCheckedOut--;
+    checkIn() {
+        this._numCheckedOut--;
     }
 
 }
 
-window.onload = function(){
+window.onload = function() {
     var lib = new Library();
     lib.fillWithBooks();
 
-    $("#login-button").click(function(){
+    $("#login-button").click(function() {
         lib.login();
     });
-    $("#addBookBtn").click(function(){
+    $("#addBookBtn").click(function() {
         lib.librarianAdd();
     });
-    $(".logout").click(function(){
+    $(".logout").click(function() {
         lib.logout();
     });
 
