@@ -18,43 +18,42 @@ class Book {
         $("#" + id).off('click');
     }
 
-    setClickHandler(_user){
+    setClickHandler(_user) {
 
-      var User = _user;
-      var id = this._id;
-      var name = this._name;
-      var cat = this._category;
-      var id = this._id;
-      var book = this;
-      if(User._isAdmin){
+        var User = _user;
+        var id = this._id;
+        var name = this._name;
+        var cat = this._category;
+        var id = this._id;
+        var book = this;
+
         $("#" + id).click(function() {
-              console.log("admin clicked");
-            $("#info").html(name + " is a(n) Ordinary Book on shelf " + cat);
-        });
-      }else{
-        $("#" + id).click(function() {
-          console.log("user clicked");
-            if (book._availability) {
-                if (User._numCheckedOut < 2) {
-                    $("#" + id).css("background-color", "red");
-                    book._borrowedBy = User._username;
-                    book._availability = false;
-                    User.checkOut();
-                } else {
-                    window.alert("You can only check out two books!");
-                }
+            if (User._isAdmin) {
+                $("#info").html(name + " is a(n) Ordinary Book on shelf " + cat);
             } else {
-                if (book._borrowedBy !== "" && book._borrowedBy !== User._username) {
-                    window.alert("You can't check in a book checked out by another user!");
+                console.log("user clicked");
+                if (book._availability) {
+                    if (User._numCheckedOut < 2) {
+                        $("#" + id).css("background-color", "red");
+                        book._borrowedBy = User._username;
+                        book._availability = false;
+                        User.checkOut();
+                    } else {
+                        window.alert("You can only check out two books!");
+                    }
                 } else {
-                    $("#" + id).css("background-color", "white");
-                    book._borrowedBy = "";
-                    book._availability = true;
-                    User.checkIn();
+                    if (book._borrowedBy !== "" && book._borrowedBy !== User._username) {
+                        window.alert("You can't check in a book checked out by another user!");
+                    } else {
+                        $("#" + id).css("background-color", "white");
+                        book._borrowedBy = "";
+                        book._availability = true;
+                        User.checkIn();
+                    }
                 }
             }
         });
-      }
+
 
 
     }
@@ -99,16 +98,6 @@ class Book {
     setCategory(cat) {
         this._category = cat;
     }
-
-    getOnClick() {
-        return this._onclick;
-    }
-
-    getInfo() {
-        return this.getName() + " is a(n) Ordinary Book on shelf " + this.getCategory();
-    }
-
-
 
     getId() {
         return this._id;
@@ -313,7 +302,6 @@ class Library {
         for (var i = 0; i < this._books.length; i++) {
             //this._books[i].removeHandlers();
             this._books[i].setClickHandler(this._user);
-            this._books[i].setClickHandler(this._user);
             // if (this._user._isAdmin) {
             //     this._books[i].setOnAdminClick();
             // } else {
@@ -350,6 +338,7 @@ class Library {
             $("#loginMenu").css("display", "none");
             $("#undergradView").css("display", "block");
             $('#undergradTable').html(this.createTable());
+
             this.addHandlers();
         } else {
             window.alert("Invalid username or password.");
@@ -366,8 +355,10 @@ class Library {
             $("#librarianView").css("display", "none");
         } else {
             $("#undergradView").css("display", "none");
-        }
 
+        }
+        $("#library").remove();
+        $('#info').remove();
         this._user = null;
         $("#loginMenu").css("display", "block");
     }
@@ -395,10 +386,4 @@ class User {
 
 }
 
-window.onload = function() {
-    new Library();
-
-
-
-
-}
+new Library();

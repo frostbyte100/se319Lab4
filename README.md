@@ -3,8 +3,8 @@ To Use The Library Program:
     - Open booksLibrary.html
 
     - Login menu will show
-        - to login as admin enter "admin" as both the username and password.
         - to login as an undergrad enter any thing that begins with the letter 'u'
+        - to login as admin enter "admin" as both the username and password.
         - anything else will be considered Invalid
     - Login as an undergrad by typing in a 'u' then anything other string into the username bar:
         - will display a table of books on shelves.
