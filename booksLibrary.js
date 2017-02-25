@@ -32,8 +32,8 @@ class Book {
         var User = _user;
         var id = this._id;
         var book = this;
-        $("#" + this._id).click(function() {
-            console.log("trying");
+        $("#" + id).click(function() {
+            console.log("adding the user click handler");
             if (book._availability) {
                 if (User._numCheckedOut < 2) {
                     $("#" + id).css("background-color", "red");
@@ -52,7 +52,6 @@ class Book {
                   book._availability = true;
                   User.checkIn();
                 }
-
             }
         });
     }
