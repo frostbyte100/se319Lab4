@@ -132,7 +132,6 @@ class Library {
         newBook.setCategory(category);
         this.addBook(newBook);
 
-
         $("#addBookName").val("");
         $("#addBookShelf").val("");
 
