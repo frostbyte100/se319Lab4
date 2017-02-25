@@ -21,7 +21,7 @@ $(document).ready(function(){
 
     $("#mouseMove").mouseleave( function(){
         $("#demo").slideDown();
-    })
+    });
 
 });
 
