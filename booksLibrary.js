@@ -8,21 +8,45 @@ class Book {
         this._category = this._possCategories[id % 4];
         this._name = name;
         this._borrowedBy = "";
-        this._availability = false;
+        this._availability = true;
         this._onclick;
     }
 
-    setOnClick(){
-      var id = this._id;
+
+    removeHandlers(){
+      $("#"+this._id).off();
+    }
+
+    setOnAdminClick(){
       var name = this._name;
       var cat = this._category;
       $("#"+this._id).click( function(){
+        console.log("here");
         $("#info").html(   name + " is a(n) Ordinary Book on shelf " + cat);
+        console.log("here");
 
       });
 
     }
 
+
+    setUserClick(User){
+      $("#"+this._id).click( function(){
+        if(this._availability){
+          if(User._numCheckedOut<2){
+            $("#"+this._id).css("background-color","white");
+            this._borrowedBy = "";
+            this._availability = true;
+            User.checkOut();
+          }
+        }else{
+            $("#"+this._id).css("background-color","red");
+            this._borrowedBy = User._username;
+            this._availability = false;
+            User.checkIn();
+        }
+      });
+    }
     setCategory(cat){
         this._category = cat;
     }
@@ -35,23 +59,7 @@ class Book {
       return this.getName() + " is a(n) Ordinary Book on shelf " + this.getCategory();
     }
 
-    checkOut(userName) {
-        if (this._availability) {
-            this._borrowedBy = userName;
-            this._availability = false;
-            return true;
-        }
-        return false;
-    }
 
-    checkIn(userName) {
-        if (this._availability == false && userName == this._borrowedBy) {
-            this._borrowedBy = "";
-            this._availability = true;
-            return true;
-        }
-        return false;
-    }
 
     getId() {
         return this._id;
@@ -111,7 +119,11 @@ class Library {
         var newBook = new Book(id, bookTitle);
         newBook.setCategory(category);
         this.addBook(newBook);
-        newBook.setOnClick();
+        if(this._user._isAdmin==="admin"){
+          b.setOnAdminClick();
+        }else if (this._user !== null && this._user !== undefined){
+          b.setUserClick(this._user);
+        }
 
         $("#addBookName").val("");
         $("#addBookShelf").val("");
@@ -143,13 +155,13 @@ class Library {
 
     addBook(b) {
         this._books.push(b);
-        b.setOnClick();
+        b.setOnAdminClick();
         var i;
         for (i = 0; i < 4; i++) {
 
             if (b.getCategory() == this._shelf[i].getCategory()) {
                 this._shelf[i].addBook(b);
-                b.setOnClick();
+
             }
         }
     }
@@ -166,15 +178,16 @@ class Library {
         x = 0;
         var lastRow = Math.max(this._shelf[0].getBooks().length, Math.max(this._shelf[1].getBooks().length, Math.max(this._shelf[2].getBooks().length, this._shelf[3].getBooks().length)));
 
-        var i = 0;
-        for (x = 0; x < lastRow; x++) {
+        var column = 0;
+        var row = 0;
+        for (row = 0; row < lastRow; row++) {
             s+="<tr>";
-            for (i = 0; i < 4; i++) {
-                if (this._shelf[i].getBook(x) === undefined) {
+            for (column = 0; column < 4; column++) {
+                if (this._shelf[column].getBook(row) === undefined) {
                     s += "<td></td>";
                 } else {
 
-                    s += "<td id='"+this._shelf[i].getBook(x).getId()+"' class='book'>" + this._shelf[i].getBook(x).getName() + "</td>";
+                    s += "<td id='"+this._shelf[column].getBook(row).getId()+"' class='book'>" + this._shelf[column].getBook(row).getName() + "</td>";
                 }
             }
             s+="</tr>";
@@ -188,6 +201,18 @@ class Library {
         for (var x = 0; x <= 24; x++) {
             this.addBook(new Book(x,"B"+x));
         }
+    }
+
+    addHandlers(){
+      console.log("Adding");
+      for(var i=0;i<this._books.length;i++){
+        this._books[i].removeHandlers();
+        if(this._user._isAdmin==="admin"){
+          this._books[i].setOnAdminClick();
+        }else if (this._user !== null && this._user !== undefined){
+          this._books[i].setUserClick(this._user);
+        }
+      }
     }
 
     getBookById(id) {
@@ -213,14 +238,15 @@ class Library {
             this._user = new User(name, this);
             $("#loginMenu").css("display","none");
             $("#librarianView").css("display","block");
-            $('#librarianTable').html(this.createTable());
+            $('#librarianTable').html(this.createTable() +   "<div id='info'></div>");
 
+            this.addHandlers();
         } else if (name.charAt(0) == 'u' || name.charAt(0) == 'U'){
             this._user = new User(name, this);
             $("#loginMenu").css("display","none");
             $("#undergradView").css("display","block");
-            $('#undergradTable').html(this.createTable());
-
+            $('#undergradTable').html(this.createTable()  +   "<div id='info'></div>");
+            this.addHandlers();
         } else {
             window.alert("Invalid username or password.");
         }
@@ -256,8 +282,11 @@ class User {
         }
     }
 
-    getCheckedOutNum(){
-      return _numCheckedOut;
+    checkOut(){
+      this._numCheckedOut++;
+    }
+    checkIn(){
+      this._numCheckedOut--;
     }
 
 }
