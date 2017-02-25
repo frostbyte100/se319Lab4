@@ -15,12 +15,8 @@ $(document).ready(function(){
         $("#demo").fadeToggle();
     });
 
-    $("#mouseMove").mouseenter( function(){
-        $("#demo").slideUp();
-    });
-
-    $("#mouseMove").mouseleave( function(){
-        $("#demo").slideDown();
+    $("#mouseDown").mousedown( function(){
+        $("#demo").slideToggle();
     });
 
 });

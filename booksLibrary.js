@@ -119,10 +119,11 @@ class Library {
         var newBook = new Book(id, bookTitle);
         newBook.setCategory(category);
         this.addBook(newBook);
-        if(this._user._isAdmin==="admin"){
-          b.setOnAdminClick();
+
+        if(this._user._isAdmin){
+          newBook.setOnAdminClick();
         }else if (this._user !== null && this._user !== undefined){
-          b.setUserClick(this._user);
+          newBook.setUserClick(this._user);
         }
 
         $("#addBookName").val("");
