@@ -1,7 +1,8 @@
 Matthew Schaffer
     - Coded code.html, code.js, and booksLibrary.html
-    - Coded login and logout functionality, the user class, and add Book functionality
+    - Coded login and logout functionality, the user class, and add Book functionality without the Handlers
 
 Leelabari Fulbel
     - Coded book class, shelf class, and much of the library class
     - Heavily focused on table and book handlers
+    - Create function to display the library in horizontal and vertical format
