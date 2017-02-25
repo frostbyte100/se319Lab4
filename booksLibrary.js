@@ -14,16 +14,15 @@ class Book {
 
 
     removeHandlers() {
-        $("#" + this._id).off();
+        var id = this._id;
+        $("#" + id).off('click');
     }
 
     setOnAdminClick() {
         var id = this._id;
         var name = this._name;
         var cat = this._category;
-        $("#" + this._id).click(function() {
-            console.log(id);
-            console.log(name);
+        $("#" + id).click(function() {
             $("#info").html(name + " is a(n) Ordinary Book on shelf " + cat);
         });
 
@@ -45,10 +44,15 @@ class Book {
                   window.alert("You can only check out two books!");
                 }
             } else {
-                $("#" + id).css("background-color", "white");
-                book._borrowedBy = "";
-                book._availability = true;
-                User.checkIn();
+                if(book._borrowedBy !== "" && book._borrowedBy!==User._username){
+                  window.alert("You can't check in a book checked out by another user!");
+                }else{
+                  $("#" + id).css("background-color", "white");
+                  book._borrowedBy = "";
+                  book._availability = true;
+                  User.checkIn();
+                }
+
             }
         });
     }
@@ -175,37 +179,74 @@ class Library {
     }
 
     createTable() {
-        var s;
-        s = "<table id=\"library\" border=2>"
-        s += "<tr>";
-        var x = 0;
-        for (x = 0; x < 4; x++) {
-            s += "<td style='background-color: grey;'>" + this._shelf[x].getCategory() + "</td>";
-        }
-        s += "</tr>";
-        x = 0;
-        var lastRow = Math.max(this._shelf[0].getBooks().length, Math.max(this._shelf[1].getBooks().length, Math.max(this._shelf[2].getBooks().length, this._shelf[3].getBooks().length)));
-
-        var column = 0;
-        var row = 0;
-        for (row = 0; row < lastRow; row++) {
-            s += "<tr>";
-            for (column = 0; column < 4; column++) {
-                if (this._shelf[column].getBook(row) === undefined) {
-                    s += "<td></td>";
-                } else {
-
-                    s += "<td id='" + this._shelf[column].getBook(row).getId() + "' class='book'>" + this._shelf[column].getBook(row).getName() + "</td>";
-                }
-            }
-            s += "</tr>";
-        }
-
-        s += "</table>";
-        s += "<div id='info'></div>";
-        return s;
+        return this.createTableHorizontal();
+        // var s;
+        // s = "<table id=\"library\" border=2>"
+        // s += "<tr>";
+        // var x = 0;
+        // for (x = 0; x < 4; x++) {
+        //     s += "<td style='background-color: grey;'>" + this._shelf[x].getCategory() + "</td>";
+        // }
+        // s += "</tr>";
+        // x = 0;
+        // var lastRow = Math.max(this._shelf[0].getBooks().length, Math.max(this._shelf[1].getBooks().length, Math.max(this._shelf[2].getBooks().length, this._shelf[3].getBooks().length)));
+        //
+        // var column = 0;
+        // var row = 0;
+        // for (row = 0; row < lastRow; row++) {
+        //     s += "<tr>";
+        //     for (column = 0; column < 4; column++) {
+        //         if (this._shelf[column].getBook(row) === undefined) {
+        //             s += "<td></td>";
+        //         } else {
+        //
+        //             s += "<td id='" + this._shelf[column].getBook(row).getId() + "' class='book'>" + this._shelf[column].getBook(row).getName() + "</td>";
+        //         }
+        //     }
+        //     s += "</tr>";
+        // }
+        //
+        // s += "</table>";
+        // s += "<div id='info'></div>";
+        // return s;
     }
 
+    createTableHorizontal(){
+      var s;
+      s = "<table id=\"library\" border=2>";
+
+      var x = 0;
+      var row = 0;
+      var column =0;
+      var lastRow = Math.max(this._shelf[0].getBooks().length, Math.max(this._shelf[1].getBooks().length, Math.max(this._shelf[2].getBooks().length, this._shelf[3].getBooks().length)));
+
+      for(row=0;row<4;row++){
+        s+="<tr>";
+        for(column=0;column<lastRow+1;column++){
+
+          if(column==0){
+            s+="<td style='background-color: grey;'>"+this._shelf[row].getCategory()+"</td>";
+          }else{
+            //if(this._shelf[row].length==lastRow){
+            //  s += "<td id='" + this._shelf[row].getBook(column-1).getId() + "' >" + this._shelf[row].getBook(column-1).getName() + "</td>";
+          //  }else{
+              if (this._shelf[row].getBook(column-1) === undefined) {
+                  s += "<td></td>";
+              } else {
+
+                  s += "<td id='" + this._shelf[row].getBook(column-1).getId() + "' >" + this._shelf[row].getBook(column-1).getName() + "</td>";
+              }
+      //      }
+          }
+
+        }
+        s+="</tr>";
+      }
+
+      s += "</table>";
+      s += "<div id='info'></div>";
+      return s;
+    }
     fillWithBooks() {
         for (var x = 0; x <= 24; x++) {
             this.addBook(new Book(x, "B" + x));
@@ -213,7 +254,7 @@ class Library {
     }
 
     addHandlers() {
-        console.log("Adding");
+
         for (var i = 0; i < this._books.length; i++) {
             this._books[i].removeHandlers();
             if (this._user._isAdmin) {
@@ -221,6 +262,8 @@ class Library {
                 this._books[i].setOnAdminClick();
             } else if (this._user !== null && this._user !== undefined) {
                 this._books[i].setUserClick(this._user);
+            }else{
+              console.log("Weird");
             }
         }
     }
