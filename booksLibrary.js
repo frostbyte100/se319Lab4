@@ -15,24 +15,25 @@ class Book {
 
     removeHandlers() {
         var id = this._id;
-        $("#" + id).unbind('click');
+        $("#" + id).off('click');
     }
 
     setClickHandler(_user){
 
       var User = _user;
+      var id = this._id;
+      var name = this._name;
+      var cat = this._category;
+      var id = this._id;
+      var book = this;
       if(User._isAdmin){
-        var id = this._id;
-        var name = this._name;
-        var cat = this._category;
         $("#" + id).click(function() {
+              console.log("admin clicked");
             $("#info").html(name + " is a(n) Ordinary Book on shelf " + cat);
         });
       }else{
-        var id = this._id;
-        var book = this;
         $("#" + id).click(function() {
-            console.log("adding the user click handler");
+          console.log("user clicked");
             if (book._availability) {
                 if (User._numCheckedOut < 2) {
                     $("#" + id).css("background-color", "red");
@@ -150,6 +151,18 @@ class Library {
         this._shelf = [new Shelf("Art"), new Shelf("Science"), new Shelf("Sport"), new Shelf("Literature")];
         this._books = [];
         this._user = null;
+
+        var self = this;
+        $("#login-button").click(function() {
+            self.login();
+        });
+        $("#addBookBtn").click(function() {
+            self.librarianAdd();
+        });
+        $(".logout").click(function() {
+            self.logout();
+        });
+        this.fillWithBooks();
     }
 
     createBook(bookTitle, category) {
@@ -267,11 +280,10 @@ class Library {
                     if (this._shelf[row].getBook(column - 1) === undefined) {
                         s += "<td></td>";
                     } else {
-
+                        //Admins do not need to see if the books are checked out
                         if (!this._user._isAdmin && this._shelf[row].getBook(column - 1)._availability == false) {
-                            console.log(this._shelf[row].getBook(column - 1).getName());
-                            console.log("Weird");
-                            s += "<td id='" + this._shelf[row].getBook(column - 1).getId() + "'style=\"background-color: red;\">" + this._shelf[row].getBook(column - 1).getName() + "</td>";
+
+                            s += "<td id='" + this._shelf[row].getBook(column - 1).getId() + "'style=\"background-color: red;\" >" + this._shelf[row].getBook(column - 1).getName() + "</td>";
                         } else {
                             s += "<td id='" + this._shelf[row].getBook(column - 1).getId() + "' >" + this._shelf[row].getBook(column - 1).getName() + "</td>";
                         }
@@ -299,7 +311,8 @@ class Library {
     addHandlers() {
 
         for (var i = 0; i < this._books.length; i++) {
-            this._books[i].removeHandlers();
+            //this._books[i].removeHandlers();
+            this._books[i].setClickHandler(this._user);
             this._books[i].setClickHandler(this._user);
             // if (this._user._isAdmin) {
             //     this._books[i].setOnAdminClick();
@@ -316,6 +329,7 @@ class Library {
     librarianAdd() {
         this.createBook(document.getElementById("addBookName").value, document.getElementById("addBookShelf").value);
         $("#library").remove();
+        $('#info').remove();
         $('#librarianTable').html(this.createTable());
         this.addHandlers();
     }
@@ -331,7 +345,7 @@ class Library {
             $('#librarianTable').html(this.createTable());
 
             this.addHandlers();
-        } else if (name.charAt(0) == 'u' || name.charAt(0) == 'U') {
+        } else if (name.charAt(0) == 'u') {
             this._user = new User(name, this);
             $("#loginMenu").css("display", "none");
             $("#undergradView").css("display", "block");
@@ -382,17 +396,9 @@ class User {
 }
 
 window.onload = function() {
-    var lib = new Library();
-    lib.fillWithBooks();
+    new Library();
 
-    $("#login-button").click(function() {
-        lib.login();
-    });
-    $("#addBookBtn").click(function() {
-        lib.librarianAdd();
-    });
-    $(".logout").click(function() {
-        lib.logout();
-    });
+
+
 
 }
